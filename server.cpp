@@ -90,7 +90,6 @@ void runVideoLogServer() {
     char buffer[BUFFER_SIZE];
     socklen_t addrlen = sizeof(address);
 
-
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd < 0) { perror("socket"); return; }
 
@@ -105,39 +104,59 @@ void runVideoLogServer() {
     listen(server_fd, 3);
     std::cout << "[VideoServer] Waiting on port " << VIDEO_LOG_PORT << "...\n";
 
-    client_fd = accept(server_fd, (struct sockaddr*)&address, &addrlen);
-    if (client_fd < 0) { perror("accept"); return; }
-    std::cout << "[VideoServer] Client connected.\n";
+    while (true) {
+        client_fd = accept(server_fd, (struct sockaddr*)&address, &addrlen);
+        if (client_fd < 0) {
+            perror("accept");
+            continue;
+        }
+        std::cout << "[VideoServer] Client connected.\n";
 
-    // 헤더: 파일명:파일크기
-    char header[256] = {0};
-    read(client_fd, header, 256);
-    std::string header_str(header);
-    size_t delim_pos = header_str.find(':');
-    std::string filename = header_str.substr(0, delim_pos);
-    long filesize = std::stol(header_str.substr(delim_pos + 1));
+        // 헤더: 파일명:파일크기
+        char header[256] = {0};
+        int header_read = read(client_fd, header, 256);
+        if (header_read <= 0) {
+            std::cerr << "[VideoServer] Failed to read header.\n";
+            close(client_fd);
+            continue;
+        }
 
-    mkdir("./received_videos", 0777);
-    std::string new_filename = "./received_videos/" + current_timestamp() + "_" + filename;
+        std::string header_str(header);
+        size_t delim_pos = header_str.find(':');
+        if (delim_pos == std::string::npos) {
+            std::cerr << "[VideoServer] Invalid header format.\n";
+            close(client_fd);
+            continue;
+        }
 
-    std::ofstream outfile(new_filename, std::ios::binary);
-    if (!outfile.is_open()) {
-        std::cerr << "[VideoServer] Failed to open file.\n";
-        return;
+        std::string filename = header_str.substr(0, delim_pos);
+        long filesize = std::stol(header_str.substr(delim_pos + 1));
+
+        mkdir("./received_videos", 0777);
+        std::string new_filename = "./received_videos/" + current_timestamp() + "_" + filename;
+
+        std::ofstream outfile(new_filename, std::ios::binary);
+        if (!outfile.is_open()) {
+            std::cerr << "[VideoServer] Failed to open file.\n";
+            close(client_fd);
+            continue;
+        }
+
+        long received = 0;
+        while (received < filesize) {
+            int bytes_read = read(client_fd, buffer, BUFFER_SIZE);
+            if (bytes_read <= 0) break;
+
+            outfile.write(buffer, bytes_read);
+            received += bytes_read;
+        }
+
+        outfile.close();
+        std::cout << "[VideoServer] File saved: " << new_filename << "\n";
+
+        close(client_fd);
+        std::cout << "[VideoServer] Client disconnected.\n";
     }
 
-    long received = 0;
-    while (received < filesize) {
-        int bytes_read = read(client_fd, buffer, BUFFER_SIZE);
-        if (bytes_read <= 0) break;
-
-        outfile.write(buffer, bytes_read);
-        received += bytes_read;
-    }
-
-    outfile.close();
-    std::cout << "[VideoServer] File saved: " << new_filename << "\n";
-
-    close(client_fd);
     close(server_fd);
 }

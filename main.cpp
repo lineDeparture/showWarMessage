@@ -14,13 +14,9 @@
 
 int main() {
 
-    // std::string logDir = "logs"; // 기본 폴더
 
-    // runTextLogServer(logDir);
-
-    // return 0;
-
-    std::thread logThread(runTextLogServer);
+    std::string logDir = "logs"; // 기본 폴더
+    std::thread logThread([&logDir]() { runTextLogServer(logDir); });
     std::thread videoThread(runVideoLogServer);
 
     logThread.join();
