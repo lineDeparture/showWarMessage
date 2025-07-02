@@ -1,0 +1,29 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "C++ Build (MinGW)",
+            "type": "shell",
+            "command": "C:\\mingw32\\bin\\g++.exe",
+            "args": [
+                "-std=c++17",
+                "-Wall",
+                "-g",
+                "-finput-charset=UTF-8",      
+                "-fexec-charset=CP949",       
+                "main.cpp",
+                "server.cpp",
+                "save_log.cpp",
+                "-o",
+                "server.exe",
+                "-lws2_32"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "detail": "Builds with MinGW g++"
+        }
+    ]
+}
