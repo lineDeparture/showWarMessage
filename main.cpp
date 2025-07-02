@@ -3,19 +3,29 @@
 #include "server.h"
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <thread>
+#include <sys/stat.h>
 #include <cstring>
-#include <fstream>
 #include <ctime>
-#include <mutex>
 
 int main() {
 
-    std::string logDir = "logs"; // 기본 폴더
+    // std::string logDir = "logs"; // 기본 폴더
 
-    runServer(logDir);
+    // runTextLogServer(logDir);
 
+    // return 0;
+
+    std::thread logThread(runTextLogServer);
+    std::thread videoThread(runVideoLogServer);
+
+    logThread.join();
+    videoThread.join();
+
+    std::cout << "서버 종료.\n";
     return 0;
 }
