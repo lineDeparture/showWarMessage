@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/mnt/swapdisk/my_data/Show_War_message/showWarMessage/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

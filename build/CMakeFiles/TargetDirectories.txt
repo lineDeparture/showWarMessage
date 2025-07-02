@@ -1,0 +1,3 @@
+/mnt/swapdisk/my_data/Show_War_message/showWarMessage/build/CMakeFiles/MyServerApp.dir
+/mnt/swapdisk/my_data/Show_War_message/showWarMessage/build/CMakeFiles/edit_cache.dir
+/mnt/swapdisk/my_data/Show_War_message/showWarMessage/build/CMakeFiles/rebuild_cache.dir
