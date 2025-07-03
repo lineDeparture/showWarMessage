@@ -22,7 +22,8 @@ ShowWarMessage/
 ├── server.h                # server.cpp 파일 추상화
 ├── save_log.cpp            #  로그 저장
 ├── save_log.h              #  save_log.cpp 파일 추상화 
-
+├── logs                    # 로그파일 저장하는 폴더 
+  --- .....                 # 로그파일 리스트 
 
 
 

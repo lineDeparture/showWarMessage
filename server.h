@@ -2,4 +2,5 @@
 #pragma once
 #include <string>
 
-void runServer(const std::string& logDir);
+void runTextLogServer(const std::string& logDir);
+void runVideoLogServer();
